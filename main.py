@@ -1,4 +1,3 @@
-#from __future__ import division, unicode_literals
 import os
 import tfidf
 import math
@@ -18,7 +17,7 @@ path = "documents/"
 
 ID = []
 documents = []
-bloblist = []
+#bloblist = []
 
 for r, d, f in os.walk(path):
     for file in f:
@@ -27,10 +26,11 @@ for r, d, f in os.walk(path):
         ID.append(os.path.splitext(name)[0])
         documents.append(i.read())
 
-for blob in range(len(documents)):
-    bloblist.append(tb(documents[blob]))
+#for blob in range(len(documents)):
+#    bloblist.append(tb(documents[blob]))
 
-VectorSpace = VectorSpace(documents, bloblist)
+VectorSpace = VectorSpace(documents)
+#VectorSpace = VectorSpace(documents, bloblist)
 
 
 
@@ -78,7 +78,7 @@ for DocID, score in scores[:10]:
     print("{}\t{:.6f}".format(DocID, round(float(score), 6)))
 
 
-
+'''
 print("")
 
 
@@ -148,4 +148,4 @@ print("------- -------")
 
 for DocID, score in scores[:10]:
     print("{}\t{:.6f}".format(DocID, round(float(score), 6)))
-
+'''
