@@ -12,9 +12,6 @@ class VectorSpace:
     # Collection of document term vectors
     documentVectors = []
 
-    # Collection of document TF-IDF vectors
-    tfidfVectors = []
-
     # Collection of document feedback vectors
     feedbackVectors = []
 
@@ -35,6 +32,7 @@ class VectorSpace:
         """ Create the vector space for the passed document strings """
         self.vectorKeywordIndex = self.getVectorKeywordIndex(documents)
         self.documentVectors = [self.makeVector(document) for document in documents]
+        #self.tfidfVectors = [self.makeTfidf(document, blob, bloblist) for document, blob in zip(documents, bloblist)]
         self.tfidfVectors = [self.makeTfidf(document, blob, bloblist) for document, blob in zip(documents, bloblist)]
 
         #print self.vectorKeywordIndex
@@ -73,6 +71,7 @@ class VectorSpace:
         return vector
 
     
+    # def makeTfidf(self, wordString, bloblist):
     def makeTfidf(self, wordString, blob, bloblist):
         """ @pre: unique(vectorIndex) """
 
@@ -82,6 +81,7 @@ class VectorSpace:
         wordList = self.parser.removeStopWords(wordList)
         for word in wordList:
             vector[self.vectorKeywordIndex[word]] = tfidf.tfidf(word, blob, bloblist)
+            #vector[self.vectorKeywordIndex[word]] = {tfidf.tfidf(word, blob, bloblist) for blob, word in zip(bloblist, blob.words)}
         return vector
 
     
@@ -97,7 +97,8 @@ class VectorSpace:
 
 
     def buildQueryTfidf(self, termList, bloblist):
-        query = self.makeTfidf(" ".join(termList), blob, bloblist) for blob in bloblist
+        #query = self.makeTfidf((" ".join(termList), blob, bloblist) for blob in bloblist)
+        query = self.makeTfidf((" ".join(termList), blob, bloblist) for blob in bloblist)
         return query
 
 
