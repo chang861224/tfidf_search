@@ -37,8 +37,8 @@ class VectorSpace:
     #def build(self,documents, bloblist):
         """ Create the vector space for the passed document strings """
         #self.bloblist = [tb(document) for document in documents]
-        self.vectorKeywordIndex = self.getVectorKeywordIndex(documents)
-        self.documentVectors = [self.makeVector(document) for document in documents]
+        self.vectorKeywordIndex = self.getVectorKeywordIndex(str(document) for document in documents)
+        self.documentVectors = [self.makeVector(str(document)) for document in documents]
         #self.tfidfVectors = [self.makeTfidf(document, blob, bloblist) for document, blob in zip(documents, bloblist)]
 
         #print self.vectorKeywordIndex
