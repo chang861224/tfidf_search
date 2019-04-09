@@ -38,7 +38,7 @@ class VectorSpace:
         """ Create the vector space for the passed document strings """
         self.vectorKeywordIndex = self.getVectorKeywordIndex(str(document) for document in documents)
         self.documentVectors = [self.makeVector(str(document)) for document in documents]
-        #self.tfidfVectors = [self.makeTfidf(str(document)) for document in documents]
+        self.tfidfVectors = [self.makeTfidf(str(document)) for document in documents]
 
         #print self.vectorKeywordIndex
         #print self.documentVectors
@@ -89,8 +89,8 @@ class VectorSpace:
 
 
     def calTfidf(self, word, bloblist):
-        for blob in enumerate(bloblist):
-            scores = {word: tfidf(word, blob, bloblist) for word in blob.words}
+        #for blob in enumerate(bloblist):
+        scores = {word: tfidf.tfidf(word, blob, bloblist) for blob in bloblist}
         return scores[word]
 
     
@@ -139,8 +139,8 @@ class VectorSpace:
         """ search for documents that match based on a list of terms """
         queryVector = self.buildQueryTfidf(searchList)
 
-        print(queryVector)
-        print(self.tfidfVectors)
+        #print(queryVector)
+        #print(self.tfidfVectors)
 
         ratings = [util.cosine(queryVector, tfidfVector) for tfidfVector in self.tfidfVectors]
         #ratings.sort(reverse=True)

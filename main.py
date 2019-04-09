@@ -74,7 +74,7 @@ for DocID, score in scores[:10]:
     print("{}\t{:.6f}".format(DocID, round(float(score), 6)))
 
 
-
+'''
 print("")
 
 
@@ -144,4 +144,4 @@ print("------- -------")
 
 for DocID, score in scores[:10]:
     print("{}\t{:.6f}".format(DocID, round(float(score), 6)))
-
+'''
