@@ -7,6 +7,13 @@ from VectorSpace import VectorSpace
 from textblob import TextBlob as tb
 from pprint import pprint
 
+
+
+print("Please enter the query: ")
+x = input()
+
+
+
 path = "documents/"
 
 ID = []
@@ -25,11 +32,6 @@ for blob in range(len(documents)):
 
 VectorSpace = VectorSpace(documents, bloblist)
 
-
-
-
-print("Please enter the query: ")
-x = input()
 
 
 
