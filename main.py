@@ -26,11 +26,7 @@ for r, d, f in os.walk(path):
         ID.append(os.path.splitext(name)[0])
         documents.append(tb(i.read()))
 
-#for blob in range(len(documents)):
-#    bloblist.append(tb(documents[blob]))
-
 VectorSpace = VectorSpace(documents)
-#VectorSpace = VectorSpace(documents, bloblist)
 
 
 
@@ -78,7 +74,7 @@ for DocID, score in scores[:10]:
     print("{}\t{:.6f}".format(DocID, round(float(score), 6)))
 
 
-'''
+
 print("")
 
 
@@ -88,7 +84,7 @@ print("")
 ##  TF-IDF Weight + Cosine Similarity  ##
 ##                                     ##
 #########################################
-scores = (ID, VectorSpace.searchTfidfByCosine([x], bloblist))
+scores = (ID, VectorSpace.searchTfidfByCosine([x]))
 scores = np.transpose(scores)
 scores = sorted(scores, key = lambda x: x[1], reverse = True)
 
@@ -148,4 +144,4 @@ print("------- -------")
 
 for DocID, score in scores[:10]:
     print("{}\t{:.6f}".format(DocID, round(float(score), 6)))
-'''
+

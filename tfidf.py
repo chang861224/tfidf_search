@@ -13,8 +13,8 @@ def idf(word, bloblist):
 
 def tfidf(word, blob, bloblist):
     return tf(word, blob) * idf(word, bloblist)
-'''
 
+'''
 bloblist = [document1, document2, document3]
 
 for i, blob in enumerate(bloblist):
