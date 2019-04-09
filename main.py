@@ -24,7 +24,7 @@ for r, d, f in os.walk(path):
         name = os.path.basename(file)
         i = open(path + name)
         ID.append(os.path.splitext(name)[0])
-        documents.append(i.read())
+        documents.append(tb(i.read()))
 
 #for blob in range(len(documents)):
 #    bloblist.append(tb(documents[blob]))
