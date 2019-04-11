@@ -16,12 +16,15 @@ class VectorSpace:
 
     tfidfVectors = []
     bloblist = []
+    idfVector = []
 
     # Collection of document feedback vectors
     feedbackVectors = []
 
     # Mapping of vector index to keyword
-    vectorKeywordIndex=[]
+    vectorKeywordIndex = []
+        
+    uniqueVocabularyList = {}
 
     #Tidies terms
     parser=None
@@ -37,11 +40,9 @@ class VectorSpace:
     def build(self,documents):
         """ Create the vector space for the passed document strings """
         self.vectorKeywordIndex = self.getVectorKeywordIndex(str(document) for document in documents)
+        self.idfVector = self.makeIdfVector()
         self.documentVectors = [self.makeVector(str(document)) for document in documents]
-        self.tfidfVectors = [self.makeTfidf(str(document)) for document in documents]
-
-        #print self.vectorKeywordIndex
-        #print self.documentVectors
+        self.tfidfVectors = [self.makeTfidfVector(documentVector) for documentVector in self.documentVectors]
 
 
     def getVectorKeywordIndex(self, documentList):
@@ -53,12 +54,12 @@ class VectorSpace:
         vocabularyList = self.parser.tokenise(vocabularyString)
         #Remove common words which have no search value
         vocabularyList = self.parser.removeStopWords(vocabularyList)
-        uniqueVocabularyList = util.removeDuplicates(vocabularyList)
+        self.uniqueVocabularyList = util.removeDuplicates(vocabularyList)
 
         vectorIndex={}
         offset=0
         #Associate a position with the keywords which maps to the dimension on the vector used to represent this word
-        for word in uniqueVocabularyList:
+        for word in self.uniqueVocabularyList:
             vectorIndex[word]=offset
             offset+=1
         return vectorIndex  #(keyword:position)
@@ -76,26 +77,23 @@ class VectorSpace:
         return vector
 
 
-    def makeTfidf(self, wordString):
+    def makeIdfVector(self):
         """ @pre: unique(vectorIndex) """
 
         #Initialise vector with 0's
         vector = [0] * len(self.vectorKeywordIndex)
-        wordList = self.parser.tokenise(wordString)
-        wordList = self.parser.removeStopWords(wordList)
-        for word in wordList:
-            vector[self.vectorKeywordIndex[word]] = self.calTfidf(word, self.bloblist)
+        for word in self.uniqueVocabularyList:
+            vector[self.vectorKeywordIndex[word]] = tfidf.idf(word, self.bloblist) 
         return vector
 
 
-    def calTfidf(self, word, bloblist):
-        #for blob in enumerate(bloblist):
-        scores = {word: tfidf.tfidf(word, blob, bloblist) for blob in bloblist}
-        return scores[word]
+    def makeTfidfVector(self, documentVector):
+        tfVector = [float(i) for i in documentVector]
+        return [a*b for a, b in zip(tfVector, self.idfVector)]
 
     
-    def makeFeedback(self, count, queryVector):
-        vector = np.array(queryVector) + 0.5 * np.array(documentVectors[count])
+    def makeFeedback(self, documentVector, queryVector):
+        vector = np.array(queryVector) + 0.5 * np.array(documentVector)
         return vector
     
     
@@ -106,14 +104,13 @@ class VectorSpace:
 
 
     def buildQueryTfidf(self, termList):
-        query = self.makeTfidf(" ".join(termList))
+        query = self.makeTfidfVector(" ".join(termList))
         return query
 
 
     def related(self,documentId):
         """ find documents that are related to the document indexed by passed Id within the document Vectors"""
         ratings = [util.cosine(self.documentVectors[documentId], documentVector) for documentVector in self.documentVectors]
-        #ratings.sort(reverse=True)
         return ratings
 
 
@@ -122,7 +119,6 @@ class VectorSpace:
         queryVector = self.buildQueryVector(searchList)
 
         ratings = [util.cosine(queryVector, documentVector) for documentVector in self.documentVectors]
-        #ratings.sort(reverse=True)
         return ratings
     
     
@@ -131,38 +127,34 @@ class VectorSpace:
         queryVector = self.buildQueryVector(searchList)
 
         ratings = [util.euclidean(queryVector, documentVector) for documentVector in self.documentVectors]
-        #ratings.sort(reverse=True)
         return ratings
     
     
     def searchTfidfByCosine(self, searchList):
         """ search for documents that match based on a list of terms """
-        queryVector = self.buildQueryTfidf(searchList)
+        queryVector = self.buildQueryVector(searchList)
+        queryTfidf = self.makeTfidfVector(queryVector)
 
-        #print(queryVector)
-        #print(self.tfidfVectors)
-
-        ratings = [util.cosine(queryVector, tfidfVector) for tfidfVector in self.tfidfVectors]
-        #ratings.sort(reverse=True)
+        ratings = [util.cosine(queryTfidf, tfidfVector) for tfidfVector in self.tfidfVectors]
         return ratings
     
     
     def searchTfidfByEuclidean(self, searchList):
         """ search for documents that match based on a list of terms """
-        queryVector = self.buildQueryTfidf(searchList)
+        queryVector = self.buildQueryVector(searchList)
+        queryTfidf = self.makeTfidfVector(queryVector)
 
-        ratings = [util.euclidean(queryVector, tfidfVector) for tfidfVector in self.tfidfVectors]
-        #ratings.sort(reverse=True)
+        ratings = [util.euclidean(queryTfidf, tfidfVector) for tfidfVector in self.tfidfVectors]
         return ratings
 
 
     def searchFeedback(self, searchList):
         queryVector = self.buildQueryVector(searchList)
+        queryTfidf = self.makeTfidfVector(queryVector)
 
-        feedbackVectors = [self.makeFeedback(documentVector, queryVector) for documentVector in range(len(documentVectors))]
+        feedbackVectors = [self.makeFeedback(documentVector, queryVector) for documentVector in self.documentVectors]
+        feedbackTfidf = [self.makeTfidfVector(feedbackVector) for feedbackVector in feedbackVectors]
 
-        feedbackTfidfVectors = self.buildQueryTfidf(searchList)
-
-        ratings = [util.cosine(feedbackTfidfVectors, tfidfVector) for tfidfVector in self.tfidfVectors]
+        ratings = [util.cosine(queryTfidf, feedbackTfidfVector) for feedbackTfidfVector in feedbackTfidf]
         return ratings
 

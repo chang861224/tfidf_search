@@ -3,10 +3,6 @@ This is the first project assignment of the class <strong>Web Search and Mining<
 
 ## Description
 First, user can enter the query. Then, the program will load the whole documents and calculate the term frequency(TF) and TF-IDF. So, we can use the value of TF and TF-IDF to search the most relative document and represent on the screen.
-<p>
-However, because the program will load the whole documents after enter the query, the process of loading costs a lot of time.
-<p>
-Note: This main.py cannot run well, so you can delete line 41 in VectorSpace.py to see the top 2 answers(tf+cosine, tf+Euclidean).
 
 ## Python Version
 Python 3.7.1
