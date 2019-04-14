@@ -9,7 +9,7 @@ Python 3.7.1
 
 ## Student
 <strong>CHANG Chi-Hung</strong><p>
-junior<br>
+Junior<br>
 Dept. in Computer Science<br>
 National Chengchi University
 
